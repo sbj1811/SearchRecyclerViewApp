@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,9 +26,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ItemClickListener {
 
     public static final String TAG = MainActivity.class.getName();
+    public static final String NAME = "name";
+    public static final String POSITION = "position";
 
     @BindView(R.id.rv)
     RecyclerView recyclerView;
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        adapter = new ListAdapter();
+        adapter = new ListAdapter(this);
         layoutManager =  new LinearLayoutManager(this);
 
         ApiConnection.getApi().getPizzas().enqueue(new Callback<List<Pizza>>() {
@@ -87,5 +90,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    @Override
+    public void itemClick(int position,String name) {
+        Intent intent = new Intent(this,DetailActivity.class);
+        intent.putExtra(NAME,name);
+        intent.putExtra(POSITION,position);
+        startActivity(intent);
     }
 }

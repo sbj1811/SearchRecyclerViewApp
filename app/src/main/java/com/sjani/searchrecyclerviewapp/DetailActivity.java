@@ -12,6 +12,7 @@ import butterknife.ButterKnife;
 public class DetailActivity extends AppCompatActivity {
 
     public static final String NAME = "name";
+    public static final String POSITION = "position";
 
     @BindView(R.id.details_name)
     TextView textView;
@@ -22,6 +23,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
         Intent intent = getIntent();
+        int position = intent.getIntExtra(POSITION,0);
         String name = intent.getExtras().getString(NAME);
         textView.setText(name);
     }

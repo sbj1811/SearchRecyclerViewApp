@@ -1,5 +1,6 @@
 package com.sjani.searchrecyclerviewapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,23 +26,15 @@ import butterknife.ButterKnife;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements Filterable {
 
     public static final String NAME = "name";
+    public static final String POSITION = "position";
     public static final String TAG = ListAdapter.class.getName();
+    ItemClickListener clickListener;
 
     List<PizzaItem> pizzaItems = new ArrayList<>();
     List<PizzaItem> pizzaItemList;
 
-    private final View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.e(TAG, "onClick: HERE " );
-            PizzaItem pizzaItem = (PizzaItem) v.getTag();
-            Intent intent = new Intent(v.getContext(),DetailActivity.class);
-            intent.putExtra(NAME,pizzaItem.getName());
-            v.getContext().startActivity(intent);
-        }
-    };
-
-    public ListAdapter() {
+    public ListAdapter(ItemClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -61,8 +54,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
                         .load(image)
                         .into(holder.imageView);
             }
-            holder.itemView.setTag(pizzaItem);
-            holder.itemView.setOnClickListener(onClickListener);
     }
 
     @Override
@@ -109,7 +100,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
         }
     };
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         @BindView(R.id.image)
         ImageView imageView;
@@ -120,6 +111,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            String name = pizzaItems.get(position).getName();
+            clickListener.itemClick(position,name);
         }
     }
 
